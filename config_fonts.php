@@ -13,14 +13,14 @@
 // More than 1 font can be specified but each will add to the processing time of the script
 
 // $this->backupSubsFont = array('dejavusanscondensed','arialunicodems','sun-exta');	// this will recognise most scripts
-$this->backupSubsFont = array('dejavusanscondensed', 'freeserif');
+$this->backupSubsFont = array('dejavusanscondensed');
 
 // Optionally set a font (name as defined below in $this->fontdata) to use for CJK characters
 // in Plane 2 Unicode (> U+20000) when using useSubstitutions.
 // Use a font like hannomb or sun-extb if available
 // only works using subsets (otherwise would add very large file)
 
-$this->backupSIPFont = 'sun-extb';
+$this->backupSIPFont = '';
 
 /*
   This array defines translations from font-family in CSS or HTML
@@ -36,14 +36,17 @@ $this->backupSIPFont = 'sun-extb';
   by including the font-family in e.g. $this->sans_fonts below
  */
 $this->fonttrans = array(
-	'times' => 'timesnewroman',
-	'courier' => 'couriernew',
-	'trebuchet' => 'trebuchetms',
-	'comic' => 'comicsansms',
-	'franklin' => 'franklingothicbook',
-	'ocr-b' => 'ocrb',
-	'ocr-b10bt' => 'ocrb',
-	'damase' => 'mph2bdamase',
+	'arial'         => 'chelvetica',
+	'helvetica'     => 'chelvetica',
+	'times'         => 'ctimes',
+	'timesnewroman' => 'ctimes',
+	'courier'       => 'ccourier',
+	'trebuchet'     => 'trebuchetms',
+	'comic'         => 'comicsansms',
+	'franklin'      => 'franklingothicbook',
+	'ocr-b'         => 'ocrb',
+	'ocr-b10bt'     => 'ocrb',
+	'damase'        => 'mph2bdamase',
 );
 
 /*
@@ -117,27 +120,9 @@ $this->fontdata = array(
 		'useOTL' => 0xFF,
 		'useKashida' => 75,
 	),
-	"freesans" => array(
-		'R' => "FreeSans.ttf",
-		'B' => "FreeSansBold.ttf",
-		'I' => "FreeSansOblique.ttf",
-		'BI' => "FreeSansBoldOblique.ttf",
 		'useOTL' => 0xFF,
-	),
-	"freeserif" => array(
-		'R' => "FreeSerif.ttf",
-		'B' => "FreeSerifBold.ttf",
-		'I' => "FreeSerifItalic.ttf",
-		'BI' => "FreeSerifBoldItalic.ttf",
 		'useOTL' => 0xFF,
 		'useKashida' => 75,
-	),
-	"freemono" => array(
-		'R' => "FreeMono.ttf",
-		'B' => "FreeMonoBold.ttf",
-		'I' => "FreeMonoOblique.ttf",
-		'BI' => "FreeMonoBoldOblique.ttf",
-	),
 	/* OCR-B font for Barcodes */
 	"ocrb" => array(
 		'R' => "ocrb10.ttf",
@@ -169,19 +154,11 @@ $this->fontdata = array(
 	"taiheritagepro" => array(/* Tai Viet */
 		'R' => "TaiHeritagePro.ttf",
 	),
-	"aegean" => array(
+	"aegean" => array( /*Greek */
 		'R' => "Aegean.otf",
 		'useOTL' => 0xFF,
 	),
-	"aegyptus" => array(
-		'R' => "Aegyptus.otf",
-		'useOTL' => 0xFF,
-	),
-	"akkadian" => array(/* Cuneiform */
-		'R' => "Akkadian.otf",
-		'useOTL' => 0xFF,
-	),
-	"quivira" => array(
+	"quivira" => array( /*Greek */
 		'R' => "Quivira.otf",
 		'useOTL' => 0xFF,
 	),
@@ -231,7 +208,7 @@ $this->fontdata = array(
 		'R' => "TaameyDavidCLM-Medium.ttf",
 		'useOTL' => 0xFF,
 	),
-	/* SMP */
+	/* SMP - Unicode */
 	"mph2bdamase" => array(
 		'R' => "damase_v.2.ttf",
 	),
@@ -263,18 +240,10 @@ $this->fontdata = array(
 		'useOTL' => 0xFF,
 		'useKashida' => 75,
 	),
-	/* CJK fonts */
-	"sun-exta" => array(
-		'R' => "Sun-ExtA.ttf",
-		'sip-ext' => 'sun-extb', /* SIP=Plane2 Unicode (extension B) */
-	),
-	"sun-extb" => array(
-		'R' => "Sun-ExtB.ttf",
-	),
-	"unbatang" => array(/* Korean */
-		'R' => "UnBatang_0613.ttf",
-	),
 );
+
+/* Allow filter so the font data can be easily modified */
+$this->fontdata = apply_filters( 'mpdf_font_data', $this->fontdata );
 
 
 // Add fonts to this array if they contain characters in the SIP or SMP Unicode planes
@@ -294,19 +263,19 @@ $this->BMPonly = array(
 //     (Otherwise the order is irrelevant)
 // Use the mPDF font-family names i.e. lowercase and no spaces (after any translations in $fonttrans)
 // Always include "sans-serif", "serif" and "monospace" etc.
-$this->sans_fonts = array('dejavusanscondensed', 'sans', 'sans-serif', 'cursive', 'fantasy', 'dejavusans', 'freesans', 'liberationsans',
+$this->sans_fonts = array('dejavusanscondensed','sans','sans-serif','cursive','fantasy','dejavusans','liberationsans',
 	'arial', 'helvetica', 'verdana', 'geneva', 'lucida', 'arialnarrow', 'arialblack', 'arialunicodems',
 	'franklin', 'franklingothicbook', 'tahoma', 'garuda', 'calibri', 'trebuchet', 'lucidagrande', 'microsoftsansserif',
 	'trebuchetms', 'lucidasansunicode', 'franklingothicmedium', 'albertusmedium', 'xbriyaz', 'albasuper', 'quillscript',
 	'humanist777', 'humanist777black', 'humanist777light', 'futura', 'hobo', 'segoeprint'
 );
 
-$this->serif_fonts = array('dejavuserifcondensed', 'serif', 'dejavuserif', 'freeserif', 'liberationserif',
+$this->serif_fonts = array('dejavuserifcondensed','serif','dejavuserif','liberationserif',
 	'timesnewroman', 'times', 'centuryschoolbookl', 'palatinolinotype', 'centurygothic',
 	'bookmanoldstyle', 'bookantiqua', 'cyberbit', 'cambria',
 	'norasi', 'charis', 'palatino', 'constantia', 'georgia', 'albertus', 'xbzar', 'algerian', 'garamond',
 );
 
-$this->mono_fonts = array('dejavusansmono', 'mono', 'monospace', 'freemono', 'liberationmono', 'courier', 'ocrb', 'ocr-b', 'lucidaconsole',
+$this->mono_fonts = array('dejavusansmono','mono','monospace','liberationmono','courier', 'ocrb','ocr-b','lucidaconsole',
 	'couriernew', 'monotypecorsiva'
 );

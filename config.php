@@ -37,9 +37,9 @@ $this->maxTTFFilesize = 2000;
 // 100 will force always to subset
 // This value is overridden if you set new mPDF('s')
 // and/or Can set at runtime
-$this->percentSubset = 30;
+$this->percentSubset = 75;
 
-$this->useAdobeCJK = false; // Uses Adobe CJK fonts for CJK languages
+$this->useAdobeCJK = true; // Uses Adobe CJK fonts for CJK languages
 // default TRUE; only set false if you have defined some available fonts that support CJK
 // If true this will not stop use of other CJK fonts if specified by font-family:
 // and vice versa i.e. only dictates behaviour when specified by lang="" incl. AutoFont()
@@ -52,40 +52,34 @@ $this->repackageTTF = false;
 
 // Allows automatic character set conversion if "charset=xxx" detected in html header (WriteHTML() )
 $this->allow_charset_conversion = true;
-$this->biDirectional = false; // automatically determine BIDI text in LTR page
+$this->biDirectional = true; // automatically determine BIDI text in LTR page
 
 // AUTOMATIC FONT SELECTION
 // Based on script and/or language
-$this->autoScriptToLang = false; // mPDF 6.0 (similar to previously using function SetAutoFont() )
+$this->autoScriptToLang = true; // mPDF 6.0 (similar to previously using function SetAutoFont() )
 $this->baseScript = 1;	// =Latin; to set another base script see constants in classes/ucdn.php
 $this->autoVietnamese = true;
 $this->autoArabic = true;
 
-$this->autoLangToFont = false; // mPDF 6.0 (similar to old useLang)
+$this->autoLangToFont = true; // mPDF 6.0 (similar to old useLang)
 
-$this->useSubstitutions = false; // Substitute missing characters in UTF-8(multibyte) documents - from other fonts
+$this->useSubstitutions = true; // Substitute missing characters in UTF-8(multibyte) documents - from other fonts
 $this->falseBoldWeight = 5; // Weight for bold text when using an artificial (outline) bold; value 0 (off) - 10 (rec. max)
 
 // CONFIGURATION
-$this->allow_output_buffering = false;
+$this->allow_output_buffering = true;
 
-$this->enableImports = false; // Adding mPDFI functions
+$this->enableImports = true; // Adding mPDFI functions
 
 $this->collapseBlockMargins = true; // Allows top and bottom margins to collapse between block elements
-$this->progressBar = 0;	// Shows progress-bars whilst generating file 0 off, 1 simple, 2 advanced
-$this->progbar_heading = 'mPDF file progress';
-
-$this->progbar_altHTML = ''; // Should include <html> and <body> but NOT end tags
-// Can include <head> and link to stylesheet etc.
-// e.g. '<html><body><p><img src="loading.gif" /> Creating PDF file. Please wait...</p>';
 
 $this->dpi = 96; // To interpret "px" pixel values in HTML/CSS (see img_dpi below)
 // Automatically correct for tags where HTML specifies optional end tags e.g. P,LI,DD,TD
 // If you are confident input html is valid XHTML, turning this off may make it more reliable(?)
 $this->allow_html_optional_endtags = true;
 
-$this->ignore_invalid_utf8 = false;
-$this->text_input_as_HTML = false; // Converts all entities in Text inputs to UTF-8 before encoding
+$this->ignore_invalid_utf8 = true;
+$this->text_input_as_HTML = true; // Converts all entities in Text inputs to UTF-8 before encoding
 $this->useGraphs = false;
 
 
@@ -119,9 +113,9 @@ $this->ICCProfile = '';	// Colour profile OutputIntent
 // Must be CMYK for PDFX, or appropriate type for PDFA(RGB or CMYK)
 
 // DEBUGGING & DEVELOPERS
-$this->showStats = false;
-$this->debug = false;
-$this->debugfonts = false; // Checks and reports on errors when parsing TTF files - adds significantly to processing time
+$this->showStats = (defined('WP_DEBUG') && WP_DEBUG === true) ? true : false;;
+$this->debug = (defined('WP_DEBUG') && WP_DEBUG === true) ? true : false;;
+$this->debugfonts = false;; // Checks and reports on errors when parsing TTF files - adds significantly to processing time
 $this->showImageErrors = false;
 $this->table_error_report = false; // Die and report error if table is too wide to contain whole words
 $this->table_error_report_param = ''; // Parameter which can be passed to show in error report i.e. chapter number being processed//
@@ -197,8 +191,8 @@ $this->header_line_spacing = 0.25; // spacing between bottom of header and line 
 $this->footer_line_spacing = 0.25; // spacing between bottom of header and line (if present) - function of fontsize
 // If 'pad' margin-top sets fixed distance in mm (padding) between bottom of header and top of text.
 // If 'stretch' margin-top sets a minimum distance in mm between top of page and top of text, which expands if header is too large to fit.
-$this->setAutoTopMargin = false;
-$this->setAutoBottomMargin = false;
+$this->setAutoTopMargin = 'stretch';
+$this->setAutoBottomMargin = 'stretch';
 $this->autoMarginPadding = 2; // distance in mm used as padding if 'stretch' mode is used
 
 // TABLES
@@ -216,7 +210,7 @@ $this->tableMinSizePriority = false; // If page-break-inside:avoid but cannot fi
 // exceeding autosize; setting this value to true will force respect for
 // autosize, and disable the page-break-inside:avoid
 
-$this->use_kwt = false;	// "Keep-with-table" Attempts to keep a <h1> to <h6> tagged heading together
+$this->use_kwt = true;	// "Keep-with-table" Attempts to keep a <h1> to <h6> tagged heading together
 // with a table which comes immediately after it.
 $this->iterationCounter = false; // Set to TRUE to use table Head iteration counter
 $this->splitTableBorderWidth = 0; // Use table border (using this width in mm) when table breaks across pages
@@ -236,9 +230,9 @@ $this->img_dpi = 96; // Default dpi to output images if size not defined
 
 // TEXT SPACING & JUSTIFICATION
 
-$this->useKerning = false;	// Specify whether kerning should be used when CSS font-kerning="auto" used for HTML;
+$this->useKerning = true;	// Specify whether kerning should be used when CSS font-kerning="auto" used for HTML;
 // Also whether kerning should be used in any direct writing e.g. $mpdf->Text();
-$this->justifyB4br = false;	// In justified text, <BR> does not cause the preceding text to be justified in browsers
+$this->justifyB4br = true;	// In justified text, <BR> does not cause the preceding text to be justified in browsers
 // Change to true to force justification (as in MS Word)
 
 $this->tabSpaces = 8; // Number of spaces to replace for a TAB in <pre> sections
@@ -281,7 +275,7 @@ $this->SHYcharmin = 2;
 $this->SHYcharmax = 10;
 
 // COLUMNS
-$this->keepColumns = false; // Set to go to the second column only when the first is full of text etc.
+$this->keepColumns = true; // Set to go to the second column only when the first is full of text etc.
 $this->max_colH_correction = 1.15; // Maximum ratio to adjust column height when justifying - too large a value can give ugly results
 $this->ColGap = 5;
 
@@ -308,9 +302,9 @@ $this->list_symbol_size = '3.6pt'; // Size (CSS) of list marker bullets (disc/ci
 $this->useActiveForms = false;
 
 // WATERMARKS
-$this->watermarkImgBehind = false;
-$this->showWatermarkText = 0;
-$this->showWatermarkImage = 0;
+$this->watermarkImgBehind = true;
+$this->showWatermarkText = 1;
+$this->showWatermarkImage = 1;
 $this->watermarkText = '';
 $this->watermarkImage = '';
 $this->watermark_font = '';
@@ -322,7 +316,7 @@ $this->watermarkImgAlphaBlend = 'Normal';
 // "Multiply" works well for watermark image on top
 
 // BORDERS
-$this->autoPadding = false; // Automatically increases padding in block elements when border-radius set - if required
+$this->autoPadding = true; // Automatically increases padding in block elements when border-radius set - if required
 
 
 //////////////////////////////////////////////

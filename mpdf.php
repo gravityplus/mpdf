@@ -70,25 +70,23 @@ require_once _MPDF_PATH . 'Tag.php';
 require_once _MPDF_PATH . 'MpdfException.php';
 
 if (!defined('_JPGRAPH_PATH')) {
-	define("_JPGRAPH_PATH", _MPDF_PATH . 'jpgraph/');
+	define("_JPGRAPH_PATH", apply_filters('mpdf_jgraph_path', _MPDF_PATH . 'jpgraph/'));
 }
 
 if (!defined('_MPDF_TEMP_PATH')) {
-	define("_MPDF_TEMP_PATH", _MPDF_PATH . 'tmp/');
+	define("_MPDF_TEMP_PATH", apply_filters('mpdf_tmp_path', _MPDF_PATH.'tmp/'));
 }
 
 if (!defined('_MPDF_TTFONTPATH')) {
-	define('_MPDF_TTFONTPATH', _MPDF_PATH . 'ttfonts/');
+	define('_MPDF_TTFONTPATH', apply_filters('mpdf_font_path', _MPDF_PATH.'ttfonts/'));
 }
 
 if (!defined('_MPDF_TTFONTDATAPATH')) {
-	define('_MPDF_TTFONTDATAPATH', _MPDF_PATH . 'ttfontdata/');
+	define('_MPDF_TTFONTDATAPATH', apply_filters('mpdf_fontdata_path', _MPDF_PATH.'ttfontdata/'));
 }
 
 $errorlevel = error_reporting();
 $errorlevel = error_reporting($errorlevel & ~E_NOTICE);
-
-//error_reporting(E_ALL);
 
 if (function_exists("date_default_timezone_set")) {
 	if (ini_get("date.timezone") == "") {
@@ -186,7 +184,6 @@ class mPDF
 	var $collapseBlockMargins;
 	var $falseBoldWeight;
 	var $normalLineheight;
-	var $progressBar;
 	var $incrementFPR1;
 	var $incrementFPR2;
 	var $incrementFPR3;
@@ -1351,10 +1348,6 @@ class mPDF
 		}
 		/* -- END IMPORTS -- */
 
-		if ($this->progressBar) {
-			$this->StartProgressBarOutput($this->progressBar);
-		} // *PROGRESS-BAR*
-
 		$this->tag = new Tag($this);
 	}
 
@@ -1637,127 +1630,6 @@ class mPDF
 		return $format;
 	}
 
-	/* -- PROGRESS-BAR -- */
-
-	function StartProgressBarOutput($mode = 1)
-	{
-		// must be relative path, or URI (not a file system path)
-		if (!defined('_MPDF_URI')) {
-			$this->progressBar = false;
-			if ($this->debug) {
-				throw new MpdfException("You need to define _MPDF_URI to use the progress bar!");
-			} else
-				return false;
-		}
-		$this->progressBar = $mode;
-		if ($this->progbar_altHTML) {
-			echo $this->progbar_altHTML;
-		} else {
-			echo '<html>
-	<head>
-	<title>mPDF File Progress</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" type="text/css" href="' . _MPDF_URI . 'progbar.css" />
-		</head>
-	<body>
-	<div class="main">
-		<div class="heading">' . $this->progbar_heading . '</div>
-		<div class="demo">
-	   ';
-			if ($this->progressBar == 2) {
-				echo '		<table width="100%"><tr><td style="width: 50%;">
-			<span class="barheading">Writing HTML code</span> <br/>
-
-			<div class="progressBar">
-			<div id="element1"  class="innerBar">&nbsp;</div>
-			</div>
-			<span class="code" id="box1"></span>
-			</td><td style="width: 50%;">
-			<span class="barheading">Autosizing elements</span> <br/>
-			<div class="progressBar">
-			<div id="element4"  class="innerBar">&nbsp;</div>
-			</div>
-			<span class="code" id="box4"></span>
-			<br/><br/>
-			<span class="barheading">Writing Tables</span> <br/>
-			<div class="progressBar">
-			<div id="element7"  class="innerBar">&nbsp;</div>
-			</div>
-			<span class="code" id="box7"></span>
-			</td></tr>
-			<tr><td><br /><br /></td><td></td></tr>
-			<tr><td style="width: 50%;">
-	';
-			}
-			echo '			<span class="barheading">Writing PDF file</span> <br/>
-			<div class="progressBar">
-			<div id="element2"  class="innerBar">&nbsp;</div>
-			</div>
-			<span class="code" id="box2"></span>
-	   ';
-			if ($this->progressBar == 2) {
-				echo '
-			</td><td style="width: 50%;">
-			<span class="barheading">Memory usage</span> <br/>
-			<div class="progressBar">
-			<div id="element5"  class="innerBar">&nbsp;</div>
-			</div>
-			<span id="box5">0</span> ' . ini_get("memory_limit") . '<br />
-			<br/><br/>
-			<span class="barheading">Memory usage (peak)</span> <br/>
-			<div class="progressBar">
-			<div id="element6"  class="innerBar">&nbsp;</div>
-			</div>
-			<span id="box6">0</span> ' . ini_get("memory_limit") . '<br />
-			</td></tr>
-			</table>
-	   ';
-			}
-			echo '			<br/><br/>
-		<span id="box3"></span>
-
-		</div>
-	   ';
-		}
-		ob_flush();
-		flush();
-	}
-
-	function UpdateProgressBar($el, $val, $txt = '')
-	{
-		// $val should be a string - 5 = actual value, +15 = increment
-
-		if ($this->progressBar < 2) {
-			if ($el > 3) {
-				return;
-			} else if ($el == 1) {
-				$el = 2;
-			}
-		}
-		echo '<script type="text/javascript">';
-		if ($val) {
-			echo ' document.getElementById(\'element' . $el . '\').style.width=\'' . $val . '%\'; ';
-		}
-		if ($txt) {
-			echo ' document.getElementById(\'box' . $el . '\').innerHTML=\'' . $txt . '\'; ';
-		}
-		if ($this->progressBar == 2) {
-			$m = round(memory_get_usage(true) / 1048576);
-			$m2 = round(memory_get_peak_usage(true) / 1048576);
-			$mem = $m * 100 / (ini_get("memory_limit") + 0);
-			$mem2 = $m2 * 100 / (ini_get("memory_limit") + 0);
-			echo ' document.getElementById(\'element5\').style.width=\'' . $mem . '%\'; ';
-			echo ' document.getElementById(\'element6\').style.width=\'' . $mem2 . '%\'; ';
-			echo ' document.getElementById(\'box5\').innerHTML=\'' . $m . 'MB / \'; ';
-			echo ' document.getElementById(\'box6\').innerHTML=\'' . $m2 . 'MB / \'; ';
-		}
-		echo '</script>' . "\n";
-		ob_flush();
-		flush();
-	}
-
-	/* -- END PROGRESS-BAR -- */
-
 	function RestrictUnicodeFonts($res)
 	{
 		// $res = array of (Unicode) fonts to restrict to: e.g. norasi|norasiB - language specific
@@ -2001,47 +1873,55 @@ class mPDF
 		}
 	}
 
+	/**
+	 * Trigger a E_USER_NOTICE so the message is stored in PHP's log
+	 * @param String $message
+	 */
+	function Notice( $message ) {
+		trigger_error( $message );
+	}
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// DEPRACATED but included for backwards compatability
 	// Depracated - can use AddPage for all
 	function AddPages($a = '', $b = '', $c = '', $d = '', $e = '', $f = '', $g = '', $h = '', $i = '', $j = '', $k = '', $l = '', $m = '', $n = '', $o = '', $p = 0, $q = 0, $r = 0, $s = 0, $t = '', $u = '')
 	{
-		throw new MpdfException('function AddPages is depracated as of mPDF 6. Please use AddPage or HTML code methods instead.');
+		$this->Notice('function AddPages is depracated as of mPDF 6. Please use AddPage or HTML code methods instead.');
 	}
 
 	function startPageNums()
 	{
-		throw new MpdfException('function startPageNums is depracated as of mPDF 6.');
+		$this->Notice('function startPageNums is depracated as of mPDF 6.');
 	}
 
 	function setUnvalidatedText($a = '', $b = -1)
 	{
-		throw new MpdfException('function setUnvalidatedText is depracated as of mPDF 6. Please use SetWatermarkText instead.');
+		$this->Notice('function setUnvalidatedText is depracated as of mPDF 6. Please use SetWatermarkText instead.');
 	}
 
 	function SetAutoFont($a)
 	{
-		throw new MpdfException('function SetAutoFont is depracated as of mPDF 6. Please use autoScriptToLang instead. See config.php');
+		$this->Notice('function SetAutoFont is depracated as of mPDF 6. Please use autoScriptToLang instead. See config.php');
 	}
 
 	function Reference($a)
 	{
-		throw new MpdfException('function Reference is depracated as of mPDF 6. Please use IndexEntry instead.');
+		$this->Notice('function Reference is depracated as of mPDF 6. Please use IndexEntry instead.');
 	}
 
 	function ReferenceSee($a, $b)
 	{
-		throw new MpdfException('function ReferenceSee is depracated as of mPDF 6. Please use IndexEntrySee instead.');
+		$this->Notice('function ReferenceSee is depracated as of mPDF 6. Please use IndexEntrySee instead.');
 	}
 
 	function CreateReference($a = 1, $b = '', $c = '', $d = 3, $e = 1, $f = '', $g = 5, $h = '', $i = '', $j = false)
 	{
-		throw new MpdfException('function CreateReference is depracated as of mPDF 6. Please use InsertIndex instead.');
+		$this->Notice('function CreateReference is depracated as of mPDF 6. Please use InsertIndex instead.');
 	}
 
 	function CreateIndex($a = 1, $b = '', $c = '', $d = 3, $e = 1, $f = '', $g = 5, $h = '', $i = '', $j = false)
 	{
-		throw new MpdfException('function CreateIndex is depracated as of mPDF 6. Please use InsertIndex instead.');
+		$this->Notice('function CreateIndex is depracated as of mPDF 6. Please use InsertIndex instead.');
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2050,42 +1930,39 @@ class mPDF
 	{
 		// Check old Aliases - now depracated mPDF 6
 		if (isset($this->UnvalidatedText)) {
-			throw new MpdfException('$mpdf->UnvalidatedText is depracated as of mPDF 6. Please use $mpdf->watermarkText  instead.');
+			$this->Notice('$mpdf->UnvalidatedText is depracated as of mPDF 6. Please use $mpdf->watermarkText  instead.');
 		}
 		if (isset($this->TopicIsUnvalidated)) {
-			throw new MpdfException('$mpdf->TopicIsUnvalidated is depracated as of mPDF 6. Please use $mpdf->showWatermarkText instead.');
+			$this->Notice('$mpdf->TopicIsUnvalidated is depracated as of mPDF 6. Please use $mpdf->showWatermarkText instead.');
 		}
 		if (isset($this->AliasNbPg)) {
-			throw new MpdfException('$mpdf->AliasNbPg is depracated as of mPDF 6. Please use $mpdf->aliasNbPg instead.');
+			$this->Notice('$mpdf->AliasNbPg is depracated as of mPDF 6. Please use $mpdf->aliasNbPg instead.');
 		}
 		if (isset($this->AliasNbPgGp)) {
-			throw new MpdfException('$mpdf->AliasNbPgGp is depracated as of mPDF 6. Please use $mpdf->aliasNbPgGp instead.');
+			$this->Notice('$mpdf->AliasNbPgGp is depracated as of mPDF 6. Please use $mpdf->aliasNbPgGp instead.');
 		}
 		if (isset($this->BiDirectional)) {
-			throw new MpdfException('$mpdf->BiDirectional is depracated as of mPDF 6. Please use $mpdf->biDirectional instead.');
+			$this->Notice('$mpdf->BiDirectional is depracated as of mPDF 6. Please use $mpdf->biDirectional instead.');
 		}
 		if (isset($this->Anchor2Bookmark)) {
-			throw new MpdfException('$mpdf->Anchor2Bookmark is depracated as of mPDF 6. Please use $mpdf->anchor2Bookmark instead.');
+			$this->Notice('$mpdf->Anchor2Bookmark is depracated as of mPDF 6. Please use $mpdf->anchor2Bookmark instead.');
 		}
 		if (isset($this->KeepColumns)) {
-			throw new MpdfException('$mpdf->KeepColumns is depracated as of mPDF 6. Please use $mpdf->keepColumns instead.');
+			$this->Notice('$mpdf->KeepColumns is depracated as of mPDF 6. Please use $mpdf->keepColumns instead.');
 		}
 		if (isset($this->useOddEven)) {
-			throw new MpdfException('$mpdf->useOddEven is depracated as of mPDF 6. Please use $mpdf->mirrorMargins instead.');
+			$this->Notice('$mpdf->useOddEven is depracated as of mPDF 6. Please use $mpdf->mirrorMargins instead.');
 		}
 		if (isset($this->useSubstitutionsMB)) {
-			throw new MpdfException('$mpdf->useSubstitutionsMB is depracated as of mPDF 6. Please use $mpdf->useSubstitutions instead.');
+			$this->Notice('$mpdf->useSubstitutionsMB is depracated as of mPDF 6. Please use $mpdf->useSubstitutions instead.');
 		}
 		if (isset($this->useLang)) {
-			throw new MpdfException('$mpdf->useLang is depracated as of mPDF 6. Please use $mpdf->autoLangToFont instead.');
+			$this->Notice('$mpdf->useLang is depracated as of mPDF 6. Please use $mpdf->autoLangToFont instead.');
 		}
 		if (isset($this->useAutoFont)) {
-			throw new MpdfException('$mpdf->useAutoFont is depracated. Please use $mpdf->autoScriptToLang instead.');
+			$this->Notice('$mpdf->useAutoFont is depracated. Please use $mpdf->autoScriptToLang instead.');
 		}
 
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '2', 'Closing last page');
-		} // *PROGRESS-BAR*
 		//Terminate document
 		if ($this->state == 3)
 			return;
@@ -2950,9 +2827,6 @@ class mPDF
 			if ($this->blklvl > 0) {
 				$save_tr = $this->table_rotate; // *TABLES*
 				$this->table_rotate = 0; // *TABLES*
-				if ($this->y == $this->blk[$this->blklvl]['y0']) {
-					$this->blk[$this->blklvl]['startpage'] ++;
-				}
 				if (($this->y > $this->blk[$this->blklvl]['y0']) || $this->flowingBlockAttr['is_table']) {
 					$toplvl = $this->blklvl;
 				} else {
@@ -3097,7 +2971,7 @@ class mPDF
 		// Paint Div Border if necessary
 		//PAINTS BACKGROUND COLOUR OR BORDERS for DIV - DISABLED FOR COLUMNS (cf. AcceptPageBreak) AT PRESENT in ->PaintDivBB
 		if (!$this->ColActive && $this->blklvl > 0) {
-			if (isset($this->blk[$this->blklvl]['y0']) && $this->y == $this->blk[$this->blklvl]['y0'] && !$this->extrapagebreak) { // mPDF 6 pagebreaktype
+			if (isset($this->blk[$this->blklvl]['y0']) && $this->y == $this->blk[$this->blklvl]['y0'] && !$this->extrapagebreak && !$this->blk[$this->blklvl]['float']) { // mPDF 6 pagebreaktype
 				if (isset($this->blk[$this->blklvl]['startpage'])) {
 					$this->blk[$this->blklvl]['startpage'] ++;
 				} else {
@@ -3832,8 +3706,10 @@ class mPDF
 			}
 		}
 		if (!$ttffile) {
-			$ttffile = _MPDF_TTFONTPATH . $this->fontdata[$family][$stylekey];
-			if (!file_exists($ttffile)) {
+			/* Allow filter to change which file is loaded */
+			$ttffile = apply_filters('mpdf_current_font_path', _MPDF_TTFONTPATH . $this->fontdata[$family][$stylekey], $this->fontdata[$family][$stylekey]);
+
+			if ( ! is_file($ttffile)) {
 				throw new MpdfException("mPDF Error - cannot find TTF TrueType font file - " . $ttffile);
 			}
 		}
@@ -9259,29 +9135,16 @@ class mPDF
 	{
 		//Output PDF to some destination
 		if ($this->showStats) {
-			echo '<div>Generated in ' . sprintf('%.2F', (microtime(true) - $this->time0)) . ' seconds</div>';
-		}
-		//Finish document if necessary
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(1, '100', 'Finished');
-		} // *PROGRESS-BAR*
-		if ($this->state < 3)
-			$this->Close();
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '100', 'Finished');
-		} // *PROGRESS-BAR*
-		// fn. error_get_last is only in PHP>=5.2
-		if ($this->debug && function_exists('error_get_last') && error_get_last()) {
-			$e = error_get_last();
-			if (($e['type'] < 2048 && $e['type'] != 8) || (intval($e['type']) & intval(ini_get("error_reporting")))) {
-				echo "<p>Error message detected - PDF file generation aborted.</p>";
-				echo $e['message'] . '<br />';
-				echo 'File: ' . $e['file'] . '<br />';
-				echo 'Line: ' . $e['line'] . '<br />';
-				exit;
-			}
+			$this->WriteHTML('<div>Generated in ' . sprintf('%.2F', (microtime(true) - $this->time0)) . ' seconds</div>');
+			$this->WriteHTML('<div>Compiled in ' . sprintf('%.2F', (microtime(true) - $this->time0)) . ' seconds (total)</div>');
+			$this->WriteHTML('<div>Peak Memory usage ' . number_format((memory_get_peak_usage(true) / (1024 * 1024)), 2) . ' MB</div>');
+			$this->WriteHTML('<div>Number of fonts ' . count($this->fonts) . '</div>');
 		}
 
+		/* Finish document if necessary */
+		if($this->state < 3) {
+			$this->Close();
+		}
 
 		if (($this->PDFA || $this->PDFX) && $this->encrypted) {
 			throw new MpdfException("PDFA1-b or PDFX/1-a does not permit encryption of documents.");
@@ -9305,18 +9168,12 @@ class mPDF
 			exit;
 		}
 
-		if ($this->showStats) {
-			echo '<div>Compiled in ' . sprintf('%.2F', (microtime(true) - $this->time0)) . ' seconds (total)</div>';
-			echo '<div>Peak Memory usage ' . number_format((memory_get_peak_usage(true) / (1024 * 1024)), 2) . ' MB</div>';
-			echo '<div>PDF file size ' . number_format((strlen($this->buffer) / 1024)) . ' kB</div>';
-			echo '<div>Number of fonts ' . count($this->fonts) . '</div>';
-			exit;
+		if (is_bool($dest)) {
+			$dest = $dest ? 'D' : 'F';
 		}
 
-
-		if (is_bool($dest))
-			$dest = $dest ? 'D' : 'F';
 		$dest = strtoupper($dest);
+
 		if ($dest == '') {
 			if ($name == '') {
 				$name = 'mpdf.pdf';
@@ -9326,138 +9183,80 @@ class mPDF
 			}
 		}
 
-		/* -- PROGRESS-BAR -- */
-		if ($this->progressBar && ($dest == 'D' || $dest == 'I')) {
-			if ($name == '') {
-				$name = 'mpdf.pdf';
-			}
-			$tempfile = '_tempPDF' . uniqid(rand(1, 100000), true);
-			//Save to local file
-			$f = fopen(_MPDF_TEMP_PATH . $tempfile . '.pdf', 'wb');
-			if (!$f)
-				throw new MpdfException('Unable to create temporary output file: ' . $tempfile . '.pdf');
-			fwrite($f, $this->buffer, strlen($this->buffer));
-			fclose($f);
-			$this->UpdateProgressBar(3, '', 'Finished');
+		$dest = apply_filters('mpdf_output_destination', $dest, $name);
+		$name = apply_filters('mpdf_output_name', $name, $dest);
 
-			echo '<script type="text/javascript">
-
-		var form = document.createElement("form");
-		form.setAttribute("method", "post");
-		form.setAttribute("action", "' . _MPDF_URI . 'includes/out.php");
-
-		var hiddenField = document.createElement("input");
-		hiddenField.setAttribute("type", "hidden");
-		hiddenField.setAttribute("name", "filename");
-		hiddenField.setAttribute("value", "' . $tempfile . '");
-		form.appendChild(hiddenField);
-
-		var hiddenField = document.createElement("input");
-		hiddenField.setAttribute("type", "hidden");
-		hiddenField.setAttribute("name", "dest");
-		hiddenField.setAttribute("value", "' . $dest . '");
-		form.appendChild(hiddenField);
-
-		var hiddenField = document.createElement("input");
-		hiddenField.setAttribute("type", "hidden");
-		hiddenField.setAttribute("name", "opname");
-		hiddenField.setAttribute("value", "' . $name . '");
-		form.appendChild(hiddenField);
-
-		var hiddenField = document.createElement("input");
-		hiddenField.setAttribute("type", "hidden");
-		hiddenField.setAttribute("name", "path");
-		hiddenField.setAttribute("value", "' . urlencode(_MPDF_TEMP_PATH) . '");
-		form.appendChild(hiddenField);
-
-		document.body.appendChild(form);
-		form.submit();
-
-		</script>
-		</div>
-		</body>
-		</html>';
-			exit;
-		}
-		else {
-			if ($this->progressBar) {
-				$this->UpdateProgressBar(3, '', 'Finished');
-			}
-			/* -- END PROGRESS-BAR -- */
-
-			switch ($dest) {
-				case 'I':
-					if ($this->debug && !$this->allow_output_buffering && ob_get_contents()) {
-						echo "<p>Output has already been sent from the script - PDF file generation aborted.</p>";
-						exit;
-					}
-					//Send to standard output
-					if (PHP_SAPI != 'cli') {
-						//We send to a browser
-						header('Content-Type: application/pdf');
-						if (headers_sent())
-							throw new MpdfException('Some data has already been output to browser, can\'t send PDF file');
-						if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) OR empty($_SERVER['HTTP_ACCEPT_ENCODING'])) {
-							// don't use length if server using compression
-							header('Content-Length: ' . strlen($this->buffer));
-						}
-						header('Content-disposition: inline; filename="' . $name . '"');
-						header('Cache-Control: public, must-revalidate, max-age=0');
-						header('Pragma: public');
-						header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-						header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-					}
-					echo $this->buffer;
-					break;
-				case 'D':
-					//Download file
-					header('Content-Description: File Transfer');
-					if (headers_sent())
+		switch ($dest) {
+			case 'I':
+				if ($this->debug && !$this->allow_output_buffering && ob_get_contents()) {
+					throw new MpdfException('Output has already been sent from the script - PDF file generation aborted.');
+				}
+				//Send to standard output
+				if (PHP_SAPI != 'cli') {
+					//We send to a browser
+					header('Content-Type: application/pdf');
+					if (headers_sent()) {
 						throw new MpdfException('Some data has already been output to browser, can\'t send PDF file');
-					header('Content-Transfer-Encoding: binary');
+					}
+
+					if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) || empty($_SERVER['HTTP_ACCEPT_ENCODING'])) {
+						// don't use length if server using compression
+						header('Content-Length: ' . strlen($this->buffer));
+					}
+					header('Content-disposition: inline; filename="' . $name . '"');
 					header('Cache-Control: public, must-revalidate, max-age=0');
 					header('Pragma: public');
 					header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 					header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-					header('Content-Type: application/force-download');
-					header('Content-Type: application/octet-stream', false);
-					header('Content-Type: application/download', false);
-					header('Content-Type: application/pdf', false);
-					if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) OR empty($_SERVER['HTTP_ACCEPT_ENCODING'])) {
-						// don't use length if server using compression
-						header('Content-Length: ' . strlen($this->buffer));
-					}
-					header('Content-disposition: attachment; filename="' . $name . '"');
-					echo $this->buffer;
-					break;
-				case 'F':
-					//Save to local file
-					$f = fopen($name, 'wb');
-					if (!$f)
-						throw new MpdfException('Unable to create output file: ' . $name);
-					fwrite($f, $this->buffer, strlen($this->buffer));
-					fclose($f);
-					break;
-				case 'S':
-					//Return as a string
-					return $this->buffer;
-				default:
-					throw new MpdfException('Incorrect output destination: ' . $dest);
-			}
-		} // *PROGRESS-BAR*
-		//======================================================================================================
-		// DELETE OLD TMP FILES - Housekeeping
-		// Delete any files in tmp/ directory that are >1 hrs old
-		$interval = 3600;
-		if ($handle = @opendir(preg_replace('/\/$/', '', _MPDF_TEMP_PATH))) { // mPDF 5.7.3
-			while (false !== ($file = readdir($handle))) {
-				if (($file != "..") && ($file != ".") && !is_dir($file) && ((filemtime(_MPDF_TEMP_PATH . $file) + $interval) < time()) && (substr($file, 0, 1) !== '.') && ($file != 'dummy.txt')) { // mPDF 5.7.3
-					unlink(_MPDF_TEMP_PATH . $file);
 				}
-			}
-			closedir($handle);
+				echo $this->buffer;
+				exit;
+			break;
+
+			case 'D':
+				//Download file
+				header('Content-Description: File Transfer');
+				if (headers_sent()) {
+					throw new MpdfException('Some data has already been output to browser, can\'t send PDF file');
+				}
+				header('Content-Transfer-Encoding: binary');
+				header('Cache-Control: public, must-revalidate, max-age=0');
+				header('Pragma: public');
+				header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+				header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+				header('Content-Type: application/force-download');
+				header('Content-Type: application/octet-stream', false);
+				header('Content-Type: application/download', false);
+				header('Content-Type: application/pdf', false);
+				if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) || empty($_SERVER['HTTP_ACCEPT_ENCODING'])) {
+					// don't use length if server using compression
+					header('Content-Length: ' . strlen($this->buffer));
+				}
+				header('Content-disposition: attachment; filename="' . $name . '"');
+				echo $this->buffer;
+				exit;
+
+			break;
+
+			case 'F':
+				//Save to local file
+				$f = fopen($name, 'wb');
+				if (!$f) {
+					throw new MpdfException('Unable to create output file: ' . $name);
+				}
+				fwrite($f, $this->buffer, strlen($this->buffer));
+				fclose($f);
+			break;
+
+			case 'S':
+				//Return as a string
+				return $this->buffer;
+			break;
+
+			default:
+				throw new MpdfException('Incorrect output destination: ' . $dest);
+			break;
 		}
-		//==============================================================================================================
 
 		return '';
 	}
@@ -10308,10 +10107,6 @@ class mPDF
 			if ((!isset($font['used']) || !$font['used']) && $type == 'TTF') {
 				continue;
 			}
-			if ($this->progressBar) {
-				$this->UpdateProgressBar(2, intval($fctr * 100 / $nfonts), 'Writing Fonts');
-				$fctr++;
-			} // *PROGRESS-BAR*
 			if (isset($font['asSubset'])) {
 				$asSubset = $font['asSubset'];
 			} else {
@@ -11257,13 +11052,7 @@ class mPDF
 
 	function _enddoc()
 	{
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '10', 'Writing Headers & Footers');
-		} // *PROGRESS-BAR*
 		$this->_puthtmlheaders();
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '20', 'Writing Pages');
-		} // *PROGRESS-BAR*
 		// Remove references to unused fonts (usually default font)
 		foreach ($this->fonts as $fk => $font) {
 			if (isset($font['type']) && $font['type'] == 'TTF' && !$font['used']) {
@@ -11312,18 +11101,12 @@ class mPDF
 		}
 
 		$this->_putpages();
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '30', 'Writing document resources');
-		} // *PROGRESS-BAR*
 
 		$this->_putresources();
 		//Info
 		$this->_newobj();
 		$this->InfoRoot = $this->n;
 		$this->_out('<<');
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '80', 'Writing document info');
-		} // *PROGRESS-BAR*
 		$this->_putinfo();
 		$this->_out('>>');
 		$this->_out('endobj');
@@ -11340,9 +11123,6 @@ class mPDF
 		//Catalog
 		$this->_newobj();
 		$this->_out('<<');
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '90', 'Writing document catalog');
-		} // *PROGRESS-BAR*
 		$this->_putcatalog();
 		$this->_out('>>');
 		$this->_out('endobj');
@@ -11660,6 +11440,11 @@ class mPDF
 	// mPDF 6
 	function _setAutoHeaderHeight(&$htmlh)
 	{
+		/* Don't apply auto header height if no header exists */
+		if ((is_string($this->HTMLHeader) && strlen($this->HTMLHeader) == 0) && (is_string($this->HTMLHeaderE) && strlen($this->HTMLHeaderE) == 0)) {
+			return;
+		}
+
 		if ($this->setAutoTopMargin == 'pad') {
 			if (isset($htmlh['h']) && $htmlh['h']) {
 				$h = $htmlh['h'];
@@ -11682,6 +11467,11 @@ class mPDF
 	// mPDF 6
 	function _setAutoFooterHeight(&$htmlf)
 	{
+		/* Don't apply auto footer height if no footer exists */
+		if ((is_string($this->HTMLFooter) && strlen($this->HTMLFooter) == 0) && (is_string($this->HTMLFooterE) && strlen($this->HTMLFooterE) == 0)) {
+			return;
+		}
+
 		if ($this->setAutoBottomMargin == 'pad') {
 			if (isset($htmlf['h']) && $htmlf['h']) {
 				$h = $htmlf['h'];
@@ -11742,7 +11532,7 @@ class mPDF
 	{
 		// Save re-trying image URL's which have already failed
 		$this->failedimages[$file] = true;
-		if ($firsttime && ($this->showImageErrors || $this->debug)) {
+		if ($firsttime && $this->showImageErrors) {
 			throw new MpdfException("IMAGE Error (" . $file . "): " . $msg);
 		}
 		return false;
@@ -14165,7 +13955,7 @@ class mPDF
 				$path = substr($path, 0, strrpos($path, "/"));
 			$path = $path . "/" . $filepath; //Make it an absolute path
 		}
-		else if (strpos($path, ":/") === false || strpos($path, ":/") > 10) { //It is a Local Link
+		else if ((strpos($path, ":/") === false || strpos($path, ":/") > 10) && !is_file($path)) { //It is a Local Link
 			if (substr($path, 0, 1) == "/") {
 				$tr = parse_url($basepath);
 				// mPDF 5.7.2
@@ -15875,9 +15665,6 @@ class mPDF
 		if (empty($html)) {
 			$html = '';
 		}
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(1, 0, 'Parsing CSS & Headers');
-		} // *PROGRESS-BAR*
 
 		if ($init) {
 			$this->headerbuffer = '';
@@ -16118,9 +15905,6 @@ class mPDF
 			mb_internal_encoding($this->mb_enc);
 		}
 		$pbc = 0;
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(1, 0);
-		} // *PROGRESS-BAR*
 		$this->subPos = -1;
 		$cnt = count($a);
 		for ($i = 0; $i < $cnt; $i++) {
@@ -16335,14 +16119,6 @@ class mPDF
 				}
 			} else { // TAG **
 				if (isset($e[0]) && $e[0] == '/') {
-					/* -- PROGRESS-BAR -- */
-					if ($this->progressBar) {  // 10% increments
-						if (intval($i * 10 / $cnt) != $pbc) {
-							$pbc = intval($i * 10 / $cnt);
-							$this->UpdateProgressBar(1, $pbc * 10, $tag);
-						}
-					}
-					/* -- END PROGRESS-BAR -- */
 
 					$endtag = trim(strtoupper(substr($e, 1)));
 
@@ -17193,10 +16969,6 @@ class mPDF
 			$bpcctr = 1;
 			while (($ratio / $target ) > 1) {
 
-				if ($this->progressBar) {
-					$this->UpdateProgressBar(4, intval(100 / ($ratio / $target)), ('Auto-sizing fixed-position block: ' . $bpcctr++));
-				} // *PROGRESS-BAR*
-
 				$this->x = $x;
 				$this->y = $y;
 
@@ -17221,9 +16993,6 @@ class mPDF
 				$actual_h = $this->y - $y;
 				$ratio = $actual_h / $use_w;
 			}
-			if ($this->progressBar) {
-				$this->UpdateProgressBar(4, '100', ' ');
-			} // *PROGRESS-BAR*
 		}
 		$shrink_f = $w / $use_w;
 
@@ -18656,7 +18425,21 @@ class mPDF
 			}
 			// Gets messed up if try and use core fonts inside a paragraph of text which needs to be BiDi re-ordered or OTLdata set
 			if (($blockdir == 'rtl' || $this->biDirectional) && isset($arrayaux[$i][4]) && in_array($arrayaux[$i][4], array('ccourier', 'ctimes', 'chelvetica', 'csymbol', 'czapfdingbats'))) {
-				throw new MpdfException("You cannot use core fonts in a document which contains RTL text.");
+				/* Fallback to appropriate font type when RTL is detected */
+				switch ($arrayaux[$i][4]) {
+					case 'ccourier':
+						$arrayaux[$i][4] = $this->mono_fonts[0];
+					break;
+
+					case 'ctimes':
+						$arrayaux[$i][4] = $this->serif_fonts[0];
+					break;
+
+					case 'chelvetica':
+					default:
+						$arrayaux[$i][4] = $this->sans_fonts[0];
+					break;
+				}
 			}
 		}
 		// mPDF 6
@@ -24429,9 +24212,6 @@ class mPDF
 
 		$y = $h = 0;
 		for ($i = 0; $i < $numrows; $i++) { //Rows
-			if ($this->progressBar) {
-				$this->UpdateProgressBar(7, intval(30 + ($i * 40 / $numrows)), ' ');
-			} // *PROGRESS-BAR*
 			if (isset($table['is_tfoot'][$i]) && $table['is_tfoot'][$i] && $level == 1) {
 				$tablefooterrowheight += $table['hr'][$i];
 				$tablefooter[$i][0]['trbackground-images'] = $table['trbackground-images'][$i];
@@ -25568,10 +25348,6 @@ class mPDF
 			}
 		}// end of rows
 
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(7, 70, ' ');
-		} // *PROGRESS-BAR*
-
 		if (count($this->cellBorderBuffer)) {
 			$this->printcellbuffer();
 		}
@@ -26260,13 +26036,7 @@ class mPDF
 			$this->_putocg();
 		$this->_putextgstates();
 		$this->_putspotcolors();
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '40', 'Compiling Fonts');
-		} // *PROGRESS-BAR*
 		$this->_putfonts();
-		if ($this->progressBar) {
-			$this->UpdateProgressBar(2, '50', 'Compiling Images');
-		} // *PROGRESS-BAR*
 		$this->_putimages();
 		$this->_putformobjects(); // *IMAGES-CORE*
 
