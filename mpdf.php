@@ -1902,6 +1902,14 @@ class mPDF
 
 	function SetAutoFont($a)
 	{
+		if($a === 0) {
+			$this->autoLangToFont = false;
+			$this->autoScriptToLang = false;
+		} else {
+			$this->autoLangToFont = true;
+			$this->autoScriptToLang = true;
+		}
+
 		$this->Notice('function SetAutoFont is depracated as of mPDF 6. Please use autoScriptToLang instead. See config.php');
 	}
 
