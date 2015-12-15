@@ -67,6 +67,7 @@ require_once _MPDF_PATH . 'classes/sea.php'; // mPDF 6.0
 /* -- END OTL -- */
 
 require_once _MPDF_PATH . 'Tag.php';
+require_once _MPDF_PATH . 'WordPress.php';
 require_once _MPDF_PATH . 'MpdfException.php';
 
 if (!defined('_JPGRAPH_PATH')) {
