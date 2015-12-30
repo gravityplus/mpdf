@@ -120,9 +120,31 @@ $this->fontdata = array(
 		'useOTL' => 0xFF,
 		'useKashida' => 75,
 	),
+
+	"freesans" => array(
+		'R' => "FreeSans.ttf",
+		'B' => "FreeSansBold.ttf",
+		'I' => "FreeSansOblique.ttf",
+		'BI' => "FreeSansBoldOblique.ttf",
 		'useOTL' => 0xFF,
+	),
+
+	"freeserif" => array(
+		'R' => "FreeSerif.ttf",
+		'B' => "FreeSerifBold.ttf",
+		'I' => "FreeSerifItalic.ttf",
+		'BI' => "FreeSerifBoldItalic.ttf",
 		'useOTL' => 0xFF,
 		'useKashida' => 75,
+	),
+
+	"freemono" => array(
+		'R' => "FreeMono.ttf",
+		'B' => "FreeMonoBold.ttf",
+		'I' => "FreeMonoOblique.ttf",
+		'BI' => "FreeMonoBoldOblique.ttf",
+	),
+
 	/* OCR-B font for Barcodes */
 	"ocrb" => array(
 		'R' => "ocrb10.ttf",
@@ -263,19 +285,19 @@ $this->BMPonly = array(
 //     (Otherwise the order is irrelevant)
 // Use the mPDF font-family names i.e. lowercase and no spaces (after any translations in $fonttrans)
 // Always include "sans-serif", "serif" and "monospace" etc.
-$this->sans_fonts = array('dejavusanscondensed','sans','sans-serif','cursive','fantasy','dejavusans','liberationsans',
+$this->sans_fonts = array('dejavusanscondensed','sans','sans-serif','cursive','fantasy','dejavusans', 'freesans','liberationsans',
 	'arial', 'helvetica', 'verdana', 'geneva', 'lucida', 'arialnarrow', 'arialblack', 'arialunicodems',
 	'franklin', 'franklingothicbook', 'tahoma', 'garuda', 'calibri', 'trebuchet', 'lucidagrande', 'microsoftsansserif',
 	'trebuchetms', 'lucidasansunicode', 'franklingothicmedium', 'albertusmedium', 'xbriyaz', 'albasuper', 'quillscript',
 	'humanist777', 'humanist777black', 'humanist777light', 'futura', 'hobo', 'segoeprint'
 );
 
-$this->serif_fonts = array('dejavuserifcondensed','serif','dejavuserif','liberationserif',
+$this->serif_fonts = array('dejavuserifcondensed','serif','dejavuserif','freeserif','liberationserif',
 	'timesnewroman', 'times', 'centuryschoolbookl', 'palatinolinotype', 'centurygothic',
 	'bookmanoldstyle', 'bookantiqua', 'cyberbit', 'cambria',
 	'norasi', 'charis', 'palatino', 'constantia', 'georgia', 'albertus', 'xbzar', 'algerian', 'garamond',
 );
 
-$this->mono_fonts = array('dejavusansmono','mono','monospace','liberationmono','courier', 'ocrb','ocr-b','lucidaconsole',
+$this->mono_fonts = array('dejavusansmono','mono','monospace','freemono','liberationmono','courier', 'ocrb','ocr-b','lucidaconsole',
 	'couriernew', 'monotypecorsiva'
 );

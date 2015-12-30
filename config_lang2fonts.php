@@ -259,9 +259,6 @@ function GetLangOpts($llcc, $adobeCJK, &$fontdata)
 
 		//CASE "ccp":	// CHAKMA
 		//CASE "lep":	// LEPCHA
-		CASE "lif":  // LIMBU
-			$unifont = "sun-exta";
-			break;
 		//CASE "sat":	// OL_CHIKI
 		//CASE "saz":	// SAURASHTRA
 		CASE "syl":  // SYLOTI_NAGRI
@@ -337,42 +334,30 @@ function GetLangOpts($llcc, $adobeCJK, &$fontdata)
 			if ($country == "HK" || $country == "TW") {
 				if ($adobeCJK) {
 					$unifont = "big5";
-				} else {
-					$unifont = "sun-exta";
 				}
 			} else if ($country == "CN") {
 				if ($adobeCJK) {
 					$unifont = "gb";
-				} else {
-					$unifont = "sun-exta";
 				}
 			} else {
 				if ($adobeCJK) {
 					$unifont = "gb";
-				} else {
-					$unifont = "sun-exta";
 				}
 			}
 			break;
 		CASE "ko": CASE "kor": // HANGUL Korean
 			if ($adobeCJK) {
 				$unifont = "uhc";
-			} else {
-				$unifont = "unbatang";
 			}
 			break;
 		CASE "ja": CASE "jpn": // Japanese HIRAGANA KATAKANA
 			if ($adobeCJK) {
 				$unifont = "sjis";
-			} else {
-				$unifont = "sun-exta";
 			}
 			break;
 		CASE "ii": CASE "iii": // Nuosu; Yi
 			if ($adobeCJK) {
 				$unifont = "gb";
-			} else {
-				$unifont = "sun-exta";
 			}
 		CASE "lis":  // LISU
 			$unifont = "quivira";
@@ -416,17 +401,11 @@ function GetLangOpts($llcc, $adobeCJK, &$fontdata)
 				CASE "ital": // OLD_ITALIC
 					$unifont = "aegean";
 					break;
-				CASE "runr": // RUNIC
-					$unifont = "sun-exta";
-					break;
 				CASE "shaw": // SHAVIAN
 					$unifont = "mph2bdamase";
 					break;
 
 				/* African */
-				CASE "egyp": // EGYPTIAN_HIEROGLYPHS
-					$unifont = "aegyptus";
-					break;
 				CASE "ethi": // ETHIOPIC
 					$unifont = "abyssinicasil";
 					break;
@@ -442,9 +421,6 @@ function GetLangOpts($llcc, $adobeCJK, &$fontdata)
 				/* Middle Eastern */
 				CASE "arab":  // ARABIC
 					$unifont = "xbriyaz";
-					break;
-				CASE "xsux": // CUNEIFORM
-					$unifont = "akkadian";
 					break;
 				//CASE "sarb":	// OLD_SOUTH_ARABIAN
 				//CASE "prti":	// INSCRIPTIONAL_PARTHIAN
@@ -483,17 +459,9 @@ function GetLangOpts($llcc, $adobeCJK, &$fontdata)
 				CASE "hans": // HAN (SIMPLIFIED)
 					if ($adobeCJK) {
 						$unifont = "gb";
-					} else {
-						$unifont = "sun-exta";
 					}
 					break;
-				CASE "bopo": // BOPOMOFO
-					$unifont = "sun-exta";
-					break;
 				//CASE "plrd":	// MIAO
-				CASE "yiii": // YI
-					$unifont = "sun-exta";
-					break;
 
 				/* American */
 				CASE "dsrt": // DESERET
