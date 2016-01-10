@@ -11196,7 +11196,24 @@ class mPDF
 			} else {
 				$psel = '';
 			}
+
+			/**
+			 * The passed in format should override the @page format
+			 * Until the SetPagedMediaCSS method is rewritten this is the easiest and most effective way
+			 */
+			if ( $newformat ) {
+				$saved_orientation = $orientation;
+				$saved_newformat   = $newformat;
+			}
+
 			list($orientation, $mgl, $mgr, $mgt, $mgb, $mgh, $mgf, $hname, $fname, $bg, $resetpagenum, $pagenumstyle, $suppress, $marks, $newformat) = $this->SetPagedMediaCSS($psel, $first, $oddEven);
+
+			/* Reset the orientation and format, if needed */
+			if ( isset( $saved_newformat ) ) {
+				$orientation = $saved_orientation;
+				$newformat   = $saved_newformat;
+			}
+
 			if ($this->mirrorMargins && ($this->page % 2 == 0)) {
 				if ($hname) {
 					$ehvalue = 1;
