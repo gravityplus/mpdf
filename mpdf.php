@@ -15688,6 +15688,11 @@ class mPDF
 		// $close - if false Leaves buffers etc. in current state, so that it can continue a block etc.
 		// $init - Clears and sets buffers to Top level block etc.
 
+		/* Check if $html is null and set to blank string */
+		if( $html === null ) {
+			$html = '';
+		}
+
 		/* Check $html is an integer, float, string, boolean or class with __toString(), otherwise throw exception */
 		if (is_scalar($html) === false) {
 			if(!is_object($html) || ! method_exists($html, '__toString')) {
