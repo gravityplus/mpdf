@@ -49,7 +49,7 @@ class WriteHtmlTests extends PHPUnit_Framework_TestCase
 			array(true, array('item', 'item2')),
 			array(true, new WriteHtmlClass()),
 			array(false, new WriteHtmlStringClass()),
-			array(true, null),
+			array(false, null),
 			array(false, ''),
 		);
 	}
