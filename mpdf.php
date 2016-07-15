@@ -16412,7 +16412,7 @@ class mPDF
 			$this->bufferoutput = false;
 
 			/* -- CSS-POSITION -- */
-			if (count($this->fixedPosBlockSave) && $sub != 4) {
+			if (count($this->fixedPosBlockSave)) {
 				foreach ($this->fixedPosBlockSave AS $fpbs) {
 					$old_page = $this->page;
 					$this->page = $fpbs[2];
