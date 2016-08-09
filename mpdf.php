@@ -1240,8 +1240,6 @@ class mPDF
 		if ($this->onlyCoreFonts) {
 			$this->useSubstitutions = true;
 			$this->SetSubstitutions();
-		} else {
-			$this->useSubstitutions = false;
 		}
 
 		/* -- HTML-CSS -- */
