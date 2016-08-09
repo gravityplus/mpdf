@@ -2238,7 +2238,7 @@ $GSLuCoverage = ' . var_export($this->GSLuCoverage, true) . ';
 												$key = $vs['match'][1];
 												$tag = $v['tag'];
 												if (isset($loclsubs[$key])) {
-													$$tag[$loclsubs[$key]] = $sub;
+													${$tag[$loclsubs[$key]]} = $sub;
 												}
 												$tmp = &$$tag;
 												$tmp[hexdec($key)] = hexdec($sub);
@@ -2249,7 +2249,7 @@ $GSLuCoverage = ' . var_export($this->GSLuCoverage, true) . ';
 												$key = $vs['match'][0];
 												$tag = $v['tag'];
 												if (isset($loclsubs[$key])) {
-													$$tag[$loclsubs[$key]] = $sub;
+													${$tag[$loclsubs[$key]]} = $sub;
 												}
 												$tmp = &$$tag;
 												$tmp[hexdec($key)] = hexdec($sub);
@@ -2268,7 +2268,7 @@ $GSLuCoverage = ' . var_export($this->GSLuCoverage, true) . ';
 											$key = substr($key, 6, 5);
 											$tag = $v['tag'];
 											if (isset($loclsubs[$key])) {
-												$$tag[$loclsubs[$key]] = $sub;
+												${$tag[$loclsubs[$key]]} = $sub;
 											}
 											$tmp = &$$tag;
 											$tmp[hexdec($key)] = hexdec($sub);
@@ -2276,7 +2276,7 @@ $GSLuCoverage = ' . var_export($this->GSLuCoverage, true) . ';
 											$key = substr($key, 0, 5);
 											$tag = $v['tag'];
 											if (isset($loclsubs[$key])) {
-												$$tag[$loclsubs[$key]] = $sub;
+												${$tag[$loclsubs[$key]]} = $sub;
 											}
 											$tmp = &$$tag;
 											$tmp[hexdec($key)] = hexdec($sub);
