@@ -354,7 +354,7 @@ class tocontents
 						if ($TOCuseLinking) {
 							$html .= '<a class="mpdf_toc_a" href="#__mpdfinternallink_' . $t['link'] . '">';
 						}
-						$html .= '<span class="mpdf_toc_p_level_' . $t['l'] . '">' . $this->mpdf->docPageNum($t['p']) . '</span>';
+						$html .= '<span class="mpdf_toc_p_level_' . $t['l'] . '">' . $this->mpdf->docPageNum($t['p'] + 1) . '</span>';
 						if ($TOCuseLinking) {
 							$html .= '</a>';
 						}
