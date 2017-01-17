@@ -14788,6 +14788,7 @@ class mPDF
 		if ($OE == 'E') {
 
 			if ($Hhtml) {
+                if (empty($this->HTMLHeaderE)) $this->HTMLHeaderE = array();    
 				$this->HTMLHeaderE['html'] = $Hhtml;
 				$this->HTMLHeaderE['h'] = $height;
 			} else {
@@ -14796,6 +14797,7 @@ class mPDF
 		} else {
 
 			if ($Hhtml) {
+                if (empty($this->HTMLHeader)) $this->HTMLHeader = array();
 				$this->HTMLHeader['html'] = $Hhtml;
 				$this->HTMLHeader['h'] = $height;
 			} else {
