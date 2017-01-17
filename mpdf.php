@@ -14788,7 +14788,7 @@ class mPDF
 		if ($OE == 'E') {
 
 			if ($Hhtml) {
-                if (empty($this->HTMLHeaderE)) $this->HTMLHeaderE = array();    
+                if (empty($this->HTMLHeaderE)) $this->HTMLHeaderE = array();
 				$this->HTMLHeaderE['html'] = $Hhtml;
 				$this->HTMLHeaderE['h'] = $height;
 			} else {
@@ -30439,8 +30439,10 @@ class mPDF
 			} else {
 				$size *= $maxsize * 2;
 			}
-		} else
-			$size *= (25.4 / $this->dpi); //nothing == px
+		} else {
+            if (is_string($size)) { $size = 0; } /* fix height: auto issue - https://github.com/mpdf/mpdf/issues/294 */
+            $size *= (25.4 / $this->dpi); //nothing == px
+        }
 
 		return $size;
 	}
