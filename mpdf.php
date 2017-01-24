@@ -9401,7 +9401,7 @@ class mPDF
 
 				// if bottom-margin==0, corrects to avoid division by zero
 				if ($this->y == $this->h) {
-					$top_y = $this->y = ($this->h - 0.1);
+					$top_y = $this->y = ($this->h + 0.00000001);
 				}
 				$html = str_replace('{PAGENO}', $pnstr, $html);
 				$html = str_replace($this->aliasNbPgGp, $pntstr, $html); // {nbpg}
