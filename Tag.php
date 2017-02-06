@@ -353,10 +353,7 @@ class Tag
 				}
 				list($isbreak, $toc_id) = $this->mpdf->tocontents->openTagTOCPAGEBREAK($attr);
 				if ($isbreak)
-					break;
-				if (!isset($attr['RESETPAGENUM']) || $attr['RESETPAGENUM'] < 1) {
-					$attr['RESETPAGENUM'] = 1;
-				} // mPDF 6
+					break;				
 			// No break - continues as PAGEBREAK...
 			/* -- END TOC -- */
 
